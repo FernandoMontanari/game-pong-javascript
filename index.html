@@ -6,96 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PONG</title>
 </head>
-<body>
+<body style="text-align: center;">
     <h1>PONG - Developed with Javascript</h1>
-    <canvas width="800" height="600"></canvas>
-    <script>
-
-        var canvas = document.querySelector('canvas');
-        var ctx = canvas.getContext('2d');
-        var initialBallPositionX = 400;
-        var initialBallPositionY = 300;
-        var moveBallX = 2;
-        var moveBallY = -2;
-        var changeDirection = 0.0001;
-
-        // GAME SETTINGS
-
-        // CAMP SETTINGS
-        var campWidth = 800;
-        var campHeight = 600;
-
-        // BALL SETTINGS
-        var ballColor = 'white';
-        var ballRadius = 10;
-
-        // PLAYER1 SETTINGS
-        var player1Color = 'white';
-        var player1Height = 200;
-
-        // PLAYER2 SETTINGS
-        var player2Color = 'white';
-        var player2Height = 200;
-
-        function camp() {
-
-            ctx.fillStyle = 'black';
-            ctx.fillRect(0, 0, 800, 600);
-        }
-
-        function ball(){
-            ctx.fillStyle = ballColor;
-            ctx.beginPath();
-            ctx.arc(initialBallPositionX, initialBallPositionY, ballRadius, 0, 2 * Math.PI);
-            ctx.fill();
-            ctx.closePath();
-
-            initialBallPositionX += moveBallX;
-            initialBallPositionY += moveBallY;
-
-            if (initialBallPositionX + ballRadius > canvas.width || initialBallPositionX - ballRadius < 0) {
-                moveBallX = -moveBallX;              
-            }
-
-            if (initialBallPositionY + ballRadius > canvas.height || initialBallPositionY - ballRadius < 0) {
-                moveBallY = -moveBallY;
-            }
-
-            initialBallPositionX += moveBallX;
-            initialBallPositionY += moveBallY;
-        }
-
-        function player1(){
-
-            // PLAYER 1
-            ctx.fillStyle = 'white';
-            ctx.fillRect(10, 200, 10, player1Height);
-        }
-
-        function player2(){
-
-            // PLAYER 2
-            ctx.fillStyle = 'white';
-            ctx.fillRect(780, 200, 10, player1Height);
-        }
-
-        function clearScreen() {
-
-            ctx.clearRect(0, 0, 800, 600);            
-        }
-
-        function screenUpdate() {
-
-            clearScreen();
-            camp();
-            ball();
-            player1();
-            player2();
-        }
-
-        setInterval(screenUpdate, 15);
-
-
-    </script>
+    <canvas></canvas>
+    <script src="script.js"></script>
 </body>
 </html>
