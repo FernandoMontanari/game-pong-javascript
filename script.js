@@ -2,25 +2,34 @@ var canvas = document.querySelector('canvas');
 var ctx = canvas.getContext('2d');
 
 // CANVAS SETTINGS
-canvas.width = 1280;
-canvas.height = 720;
+canvas.width = 600;
+canvas.height = 400;
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
 
-var initialBallPositionX = canvas.width / 2;
-var initialBallPositionY = canvas.height / 2;
-var moveBallX = 2;
-var moveBallY = -2;
-var player1WidthPosition = - 1260;
-var player2WidthPosition = - 30;
-var player1HeightPosition = 250;
-var player2HeightPosition = 250;
+const initialBallPositionX = canvas.width / 2;
+const initialBallPositionY = canvas.height / 2;
+const refreshPageVelocity = 10;
 
+var ballPositionX = initialBallPositionX;
+var ballPositionY = initialBallPositionY;
+var moveBallX = 5;
+var moveBallY = -5;
+var player1XPosition = 10;
+var player2XPosition = 580;
+var player1YPosition = 150;
+var player2YPosition = 150;
+const playerWidth = 10;
+const playerHeight = 90;
+var player1Points = 0;
+var player2Points = 0;
 
 // KEYBOARD SETTINGS
-var keyUp = 38;
-var keyDown = 40;
-var keyMovement = 20;
+var UpPressed = false;
+var DownPressed = false;
 
 // GAME SETTINGS
+var multiplayer = false;
 
 // CAMP SETTINGS
 var campWidth = canvas.width;
@@ -32,13 +41,10 @@ var ballRadius = 10;
 
 // PLAYER1 SETTINGS
 var player1Color = 'white';
-var player1Height = 200;
-var player1PositionY = player1HeightPosition;
 
 // PLAYER2 SETTINGS
 var player2Color = 'white';
-var player2Height = 200;
-var player2PositionY = player2HeightPosition;
+var oponentVelocity;
 
 function camp() {
 
@@ -50,44 +56,132 @@ function ball(){
 
     ctx.fillStyle = ballColor;
     ctx.beginPath();
-    ctx.arc(initialBallPositionX, initialBallPositionY, ballRadius, 0, 2 * Math.PI);
+    ctx.arc(ballPositionX, ballPositionY, ballRadius, 0, 2 * Math.PI);
     ctx.fill();
     ctx.closePath();
 }
 
 function ballMovement() {
 
-    if (initialBallPositionX + ballRadius > campWidth || initialBallPositionX - ballRadius < 0) {
+    if (ballPositionX + ballRadius > campWidth || ballPositionX - ballRadius < 0) {
         moveBallX = -moveBallX;              
     }
 
-    if (initialBallPositionY + ballRadius > campHeight || initialBallPositionY - ballRadius < 0) {
+    if (ballPositionY + ballRadius > campHeight || ballPositionY - ballRadius < 0) {
         moveBallY = -moveBallY;
     }
 
-    initialBallPositionX += moveBallX;
-    initialBallPositionY += moveBallY;
+    ballPositionX += moveBallX;
+    ballPositionY += moveBallY;
 }
 
 function player1(){
 
     ctx.fillStyle = 'white';
-    ctx.fillRect(campWidth + player1WidthPosition, player1PositionY , 10, player1Height);
+    ctx.beginPath();
+    ctx.fillRect(player1XPosition, player1YPosition , playerWidth, playerHeight);
+    ctx.closePath();
 }
 
 function player2(){
 
     ctx.fillStyle = 'white';
-    ctx.fillRect(campWidth + player2WidthPosition, player2PositionY, 10, player1Height);
+    ctx.beginPath();
+    ctx.fillRect(player2XPosition, player2YPosition, playerWidth, playerHeight);
+    ctx.closePath();
 }
 
-function pressKey(event) {
-
-    if(event.keyCode == keyUp) {
-        player1PositionY -= keyMovement
-    } else if (event.keyCode == keyDown) {
-        player1PositionY += keyMovement
+function keyDownHandler(event) {
+    if (event.key === "Up" || event.key === "ArrowUp") {
+        upPressed = true;
+    } if (event.key === "Down" || event.key === "ArrowDown") {
+        downPressed = true;
     }
+}
+
+function keyUpHandler(event) {
+    if (event.key === "Up" || event.key === "ArrowUp") {
+        upPressed = false;
+    } if (event.key === "Down" || event.key === "ArrowDown") {
+        downPressed = false;
+    }
+}
+
+function playersMovement() {
+    if (upPressed) {
+        player1YPosition -= 7;
+        if (player1YPosition < 0) {
+            player1YPosition = 0;
+        }
+    } 
+    
+    if (downPressed) {
+        player1YPosition += 7;
+        if (player1YPosition > 310) {
+            player1YPosition = 310;
+        }
+    }
+}
+
+function ballColisionRacket() {
+    if (ballPositionX - ballRadius < player1XPosition + playerWidth &&
+        ballPositionY - ballRadius < player1YPosition + playerHeight &&
+        ballPositionY - ballRadius > player1YPosition - 35) {
+        moveBallX *= -1;
+    }
+
+    if (ballPositionX - ballRadius > player2XPosition - playerWidth - 10 &&
+        ballPositionY - ballRadius < player2YPosition + playerHeight &&
+        ballPositionY - ballRadius > player2YPosition - 35 ) {
+        moveBallX *= -1;
+    }
+}
+
+function ballDontGetStuck() {
+    if(ballPositionX - ballRadius < 0) {
+        ballPositionX = 30;
+        moveBallX *= -1;
+    }
+
+    if(ballPositionX + ballRadius > 600) {
+        ballPositionX = 570;
+        moveBallX *= -1;
+    }
+}
+
+function enemyMovement() {
+    if (multiplayer) {
+
+    } else {
+        oponentVelocity = ballPositionY;
+        player2YPosition = oponentVelocity - 30;
+        if (player2YPosition < 0) {
+            player2YPosition = 0;
+        }
+        if (player2YPosition > 310) {
+            player2YPosition = 310;
+        }
+
+
+    }
+
+}
+
+function pointsCount() {
+    if (ballPositionX > 590) {
+        player1Points += 1;
+    }
+
+    if (ballPositionX < 10) {
+        player2Points += 1;
+    }
+}
+
+function showPoints() {
+    ctx.fillStyle = "255"
+    ctx.font = "16px Arial";
+    ctx.fillText(player1Points, 150, 20);
+    ctx.fillText(player2Points, 450, 20);
 }
 
 function clearScreen() {
@@ -97,13 +191,18 @@ function clearScreen() {
 
 function screenUpdate() {
 
-    clearScreen();
     camp();
     ball();
     player1();
     player2();
     ballMovement();
+    ballColisionRacket();
+    enemyMovement();
+    pointsCount();
+    showPoints();
+    ballDontGetStuck();
+    playersMovement();
 }
 
-setInterval(screenUpdate, 1);
-document.onkeydown = pressKey;
+setInterval(screenUpdate, refreshPageVelocity);
+//document.onkeydown = pressKey;
