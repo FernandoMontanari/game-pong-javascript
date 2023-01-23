@@ -25,8 +25,10 @@ var player1Points = 0;
 var player2Points = 0;
 
 // KEYBOARD SETTINGS
-var UpPressed = false;
-var DownPressed = false;
+var upPressed = false;
+var downPressed = false;
+var upPressedP2 = false;
+var downPressedP2 = false;
 
 // GAME SETTINGS
 var multiplayer = false;
@@ -94,16 +96,28 @@ function player2(){
 function keyDownHandler(event) {
     if (event.key === "Up" || event.key === "ArrowUp") {
         upPressed = true;
-    } if (event.key === "Down" || event.key === "ArrowDown") {
+    } else if (event.key === "Down" || event.key === "ArrowDown") {
         downPressed = true;
+    }
+
+    if (multiplayer && event.key === "w") {
+        upPressedP2 = true
+    } else if (multiplayer || event.key === "s") {
+        downPressedP2 = true;
     }
 }
 
 function keyUpHandler(event) {
     if (event.key === "Up" || event.key === "ArrowUp") {
         upPressed = false;
-    } if (event.key === "Down" || event.key === "ArrowDown") {
+    } else if (event.key === "Down" || event.key === "ArrowDown") {
         downPressed = false;
+    }
+
+    if (multiplayer && event.key === "w") {
+        upPressedP2 = false
+    } else if (multiplayer || event.key === "s") {
+        downPressedP2 = false;
     }
 }
 
@@ -119,6 +133,20 @@ function playersMovement() {
         player1YPosition += 7;
         if (player1YPosition > 310) {
             player1YPosition = 310;
+        }
+    }
+
+    if (upPressedP2) {
+        player2YPosition -= 7;
+        if (player2YPosition < 0) {
+            player2YPosition = 0;
+        }
+    } 
+    
+    if (downPressedP2) {
+        player2YPosition += 7;
+        if (player2YPosition > 310) {
+            player2YPosition = 310;
         }
     }
 }
@@ -150,26 +178,28 @@ function ballDontGetStuck() {
 }
 
 function enemyMovement() {
-    if (multiplayer) {
+    if (multiplayer == false) {
 
-    } else {
-        oponentVelocity = ballPositionY;
-        player2YPosition = oponentVelocity - 30;
+        player2YPosition = player2YPosition;
+
+        if ( player2YPosition > ballPositionY) {
+            player2YPosition -= 4;
+        } else {
+            player2YPosition += 4;
+        }
         if (player2YPosition < 0) {
             player2YPosition = 0;
         }
         if (player2YPosition > 310) {
             player2YPosition = 310;
         }
-
-
     }
 
 }
 
 function pointsCount() {
     if (ballPositionX > 590) {
-        player1Points += 1;
+        player1Points += 1;        
     }
 
     if (ballPositionX < 10) {
@@ -184,10 +214,10 @@ function showPoints() {
     ctx.fillText(player2Points, 450, 20);
 }
 
-function clearScreen() {
+/*function clearScreen() {
 
     ctx.clearRect(0, 0, campWidth, campHeight);            
-}
+}*/
 
 function screenUpdate() {
 
@@ -205,4 +235,3 @@ function screenUpdate() {
 }
 
 setInterval(screenUpdate, refreshPageVelocity);
-//document.onkeydown = pressKey;
