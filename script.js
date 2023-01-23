@@ -11,6 +11,10 @@ const initialBallPositionX = canvas.width / 2;
 const initialBallPositionY = canvas.height / 2;
 const refreshPageVelocity = 10;
 
+// AUDIO IMPORT
+const pointAudio = new Audio('sound/points.mp3');
+const racketAudio = new Audio('sound/racket.mp3');
+
 var ballPositionX = initialBallPositionX;
 var ballPositionY = initialBallPositionY;
 var moveBallX = 5;
@@ -156,12 +160,14 @@ function ballColisionRacket() {
         ballPositionY - ballRadius < player1YPosition + playerHeight &&
         ballPositionY - ballRadius > player1YPosition - 35) {
         moveBallX *= -1;
+        racketAudio.play();
     }
 
     if (ballPositionX - ballRadius > player2XPosition - playerWidth - 10 &&
         ballPositionY - ballRadius < player2YPosition + playerHeight &&
         ballPositionY - ballRadius > player2YPosition - 35 ) {
         moveBallX *= -1;
+        racketAudio.play();
     }
 }
 
@@ -199,11 +205,13 @@ function enemyMovement() {
 
 function pointsCount() {
     if (ballPositionX > 590) {
-        player1Points += 1;        
+        player1Points += 1;
+        pointAudio.play();        
     }
 
     if (ballPositionX < 10) {
         player2Points += 1;
+        pointAudio.play();
     }
 }
 
